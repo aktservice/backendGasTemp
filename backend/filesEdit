@@ -1,0 +1,31 @@
+/**
+ * @description 指定されたフォルダからCSVファイルを取得後
+ * CSVファイルから２次元配列データを取得する関数
+ * @author yoshitaka <sato-yoshitaka@aktio.co.jp>
+ * @date 2022-09-27
+ * @returns {string[][]}
+ */
+function getDataFromCSV() {
+    //指定ドライブフォルダからファイルを全取得
+    const files = DriveApp.getFolderById(myconst.FOLDERID).getFiles();
+    let fileId = '';
+    while (files.hasNext()) {
+        const file = files.next();
+        const fileName = file.getName();
+        if (fileName.indexOf('csv') != -1) {
+            fileId = file.getId();
+            break;
+        }
+    }
+    if (fileId == '') {
+        let ret = [['nodata']];
+        return ret;
+    }
+    //shift-JISでファイルを取得後２次元配列へ
+    const csv = DriveApp.getFileById(fileId)
+        .getBlob()
+        .getDataAsString('shift-JIS');
+    const data = Utilities.parseCsv(csv);
+   
+    return data;
+}
