@@ -197,4 +197,13 @@ export class importCsvLib {
     var data: string[][] = Utilities.parseCsv(blob)
     return data
   }
+  zeroPad(data: string[][],startColumn:number,targetColumnNumber:number,padLength:number): void {
+    for (let i = startColumn; i < data.length; i++) {
+        const element = data[i][targetColumnNumber];
+        data[i][targetColumnNumber]= element.padStart(padLength,"0")
+
+      }
+    }
+    return returnData
+  }
 }
