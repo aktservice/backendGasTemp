@@ -37,4 +37,21 @@ class Comparison {
     });
     return filterData;
   }
+    public getFilterDataWithHeaderBy2DimData(
+    data: string[][] | any[][],
+    filterValue: string,
+    targetArrayColumn: number
+  ): string[][] | any[][] {
+    const sp = this.sp;
+    const filterData = data.filter((element, index) => {
+      if (index == 0) {
+        return true;
+      }
+      const value = element[targetArrayColumn];
+      if (filterValue == value) {
+        return true;
+      }
+    });
+    return filterData;
+  }
 }
