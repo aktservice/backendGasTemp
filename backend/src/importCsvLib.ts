@@ -12,13 +12,13 @@
  */
 
 export class importCsvLib {
-  private folderId: string
-  constructor(rootFolderId: string, findFolderName: string = 'root') {
-    if (findFolderName == 'root') {
-      this.folderId = rootFolderId
+  private folderId: string;
+  constructor(rootFolderId: string, findFolderName: string = "root") {
+    if (findFolderName == "root") {
+      this.folderId = rootFolderId;
     } else {
-      const id = this.findFolder(rootFolderId, findFolderName).getId()
-      this.folderId = id
+      const id = this.findFolder(rootFolderId, findFolderName).getId();
+      this.folderId = id;
     }
   }
   /**
@@ -28,7 +28,7 @@ export class importCsvLib {
    * @memberof importCsvLib
    */
   public get getFolderId(): string {
-    return this.folderId
+    return this.folderId;
   }
   /**
    * @description　フォルダを探すメソッド
@@ -42,16 +42,16 @@ export class importCsvLib {
    */
   findFolder(
     rootFolderId: string,
-    folderName: string = 'noName'
+    folderName: string = "noName"
   ): GoogleAppsScript.Drive.Folder {
-    var folder: GoogleAppsScript.Drive.Folder
-    const folders = DriveApp.getFolderById(rootFolderId).getFolders()
+    var folder: GoogleAppsScript.Drive.Folder;
+    const folders = DriveApp.getFolderById(rootFolderId).getFolders();
     while (folders.hasNext()) {
-      folder = folders.next()
+      folder = folders.next();
       if (folder.getName() == folderName) {
-        return folder
-      } else if (folderName == 'noName') {
-        return folder
+        return folder;
+      } else if (folderName == "noName") {
+        return folder;
       }
     }
   }
@@ -66,29 +66,29 @@ export class importCsvLib {
    * @memberof importCsvLib
    */
   findFile(
-    fileName: string = 'noName'
+    fileName: string = "noName"
   ): GoogleAppsScript.Drive.File | undefined {
-    var file: GoogleAppsScript.Drive.File
-    const files = DriveApp.getFolderById(this.folderId).getFiles()
+    var file: GoogleAppsScript.Drive.File;
+    const files = DriveApp.getFolderById(this.folderId).getFiles();
     while (files.hasNext()) {
-      file = files.next()
+      file = files.next();
       if (file.getName() == fileName) {
-        return file
-      } else if (fileName == 'noName') {
-        return file
+        return file;
+      } else if (fileName == "noName") {
+        return file;
       }
     }
   }
 
   findFiles(
-    fileName: string = 'noName'
+    fileName: string = "noName"
   ): GoogleAppsScript.Drive.FileIterator | undefined {
-    var file: GoogleAppsScript.Drive.File
-    const files = DriveApp.getFolderById(this.folderId).getFiles()
+    var file: GoogleAppsScript.Drive.File;
+    const files = DriveApp.getFolderById(this.folderId).getFiles();
     while (files.hasNext()) {
-      return files
+      return files;
     }
-    return undefined
+    return undefined;
   }
 
   /**
@@ -102,32 +102,32 @@ export class importCsvLib {
    */
 
   createDriveFileFromCSV(file: any, fileName: string): string {
-    const folderID: string = this.folderId
-    const yyyyMM: string = Utilities.formatDate(new Date(), 'JST', 'yyyyMMdd')
-    var res = Drive.Files.insert(
+    const folderID: string = this.folderId;
+    const yyyyMM: string = Utilities.formatDate(new Date(), "JST", "yyyyMMdd");
+    var res = Drive.Files.create(
       {
-        mimeType: 'application/vnd.google-apps.spreadsheet',
-        parents: [{ id: folderID }],
-        title: yyyyMM + fileName,
+        mimeType: "application/vnd.google-apps.spreadsheet",
+        parents: [folderID],
+        name: yyyyMM + fileName,
       },
       file.getBlob()
-    )
-    return res.id
+    );
+    return res.id;
   }
   createDriveFileFromExcel(
     file: GoogleAppsScript.Base.Blob,
     fileName: string
   ): string {
-    const folderID: string = this.folderId
-    var res = Drive.Files.insert(
+    const folderID: string = this.folderId;
+    var res = Drive.Files.create(
       {
-        mimeType: 'application/vnd.google-apps.spreadsheet',
-        parents: [{ id: folderID }],
-        title: fileName,
+        mimeType: "application/vnd.google-apps.spreadsheet",
+        parents: [folderID],
+        name: fileName,
       },
       file
-    )
-    return res.id
+    );
+    return res.id;
   }
 
   /**
@@ -140,8 +140,8 @@ export class importCsvLib {
    * @memberof importCsvLib
    */
   createDriveFileFromblob(file: any): any {
-    var myfile = DriveApp.createFile(file.getBlob())
-    return myfile
+    var myfile = DriveApp.createFile(file.getBlob());
+    return myfile;
   }
 
   /**
@@ -152,7 +152,7 @@ export class importCsvLib {
    * @memberof importCsvLib
    */
   deleteDriveFileFromId(fileId: string) {
-    DriveApp.getFileById(fileId).setTrashed(true)
+    DriveApp.getFileById(fileId).setTrashed(true);
   }
 
   /**
@@ -164,7 +164,7 @@ export class importCsvLib {
    * @memberof importCsvLib
    */
   sendCsv(fileId: string): string[][] {
-    return this.csvChangeJis(fileId)
+    return this.csvChangeJis(fileId);
   }
 
   /**
@@ -176,9 +176,9 @@ export class importCsvLib {
    * @memberof importCsvLib
    */
   csvChange(fileId: any): string[][] {
-    var blob = DriveApp.getFileById(fileId).getBlob().getDataAsString()
-    var data: string[][] = Utilities.parseCsv(blob)
-    return data
+    var blob = DriveApp.getFileById(fileId).getBlob().getDataAsString();
+    var data: string[][] = Utilities.parseCsv(blob);
+    return data;
   }
 
   /**
@@ -191,19 +191,19 @@ export class importCsvLib {
    */
 
   csvChangeJis(fileId: string): string[][] {
-    var blob = DriveApp.getFileById(fileId)
-      .getBlob()
-      .getDataAsString('Shift_JIS')
-    var data: string[][] = Utilities.parseCsv(blob)
-    return data
+    var blob = DriveApp.getFileById(fileId).getBlob().getDataAsString("MS932");
+    var data: string[][] = Utilities.parseCsv(blob);
+    return data;
   }
-  zeroPad(data: string[][],startColumn:number,targetColumnNumber:number,padLength:number): void {
+  zeroPad(
+    data: string[][],
+    startColumn: number,
+    targetColumnNumber: number,
+    padLength: number
+  ): void {
     for (let i = startColumn; i < data.length; i++) {
-        const element = data[i][targetColumnNumber];
-        data[i][targetColumnNumber]= element.padStart(padLength,"0")
-
-      }
+      const element = data[i][targetColumnNumber];
+      data[i][targetColumnNumber] = element.padStart(padLength, "0");
     }
-    return returnData
   }
 }

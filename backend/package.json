@@ -4,7 +4,7 @@
   "description": "backend for gas",
   "main": "index.js",
   "dependencies": {
-    "@types/google-apps-script": "^1.0.78"
+    "@types/google-apps-script": "^1.0.86"
   },
   "devDependencies": {},
   "scripts": {
