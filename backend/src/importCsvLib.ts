@@ -92,7 +92,78 @@ export class importCsvLib {
   }
 
   /**
-   * @description　EXCELファイルをグーグルスプレッドシート形式ファイルにするメソッド
+   * @description 階層化した同名ファイルを探して処理するメソッド
+   * @example deepLevelFindFiles("targetfile",["2024","10"],rootID,0)
+   * @author yoshitaka <sato-yoshitaka@aktio.co.jp>
+   * @date 20/12/2024
+   * @param {string} findfileName
+   * @param {string[]} findFolderName//["2024","11月"]
+   * @param {string} folderid
+   * @param {number} [increment=0]
+   * @returns {*}  {GoogleAppsScript.Drive.File[]}
+   * @memberof importCsvLib
+   */
+
+  /* example 図
+    +root(rootId = "rootID")
+    |-2024
+    |   |-10
+    |   | |-targetfile
+    |   | _
+    |   |- 9
+    |   ...
+    |+2023
+    ...
+    */
+
+  deepLevelFindFiles(
+    findfileName: string,
+    findFolderName: string[],
+    folderid: string,
+    increment = 0
+  ): GoogleAppsScript.Drive.File[] {
+    const dr = DriveApp.getFolderById(folderid);
+    const folders = dr.getFolders();
+    //フォルダをまわして一致した場合に処理スタート
+    while (folders.hasNext()) {
+      const folder = folders.next();
+      if (folder.getName() !== findFolderName[increment]) {
+        continue;
+      }
+      //findFolderName には探したいフォルダ名称を配列で記入
+      //increment で再帰する階層の深さを保持
+      if (findFolderName.length - 1 !== increment) {
+        increment++;
+        //階層の検索文字列がまだある場合は再帰して探索
+        const returnFile = this.deepLevelFindFiles(
+          findfileName,
+          findFolderName,
+          folder.getId(),
+          increment
+        );
+        try {
+          //ファイルが見つからない場合はエラーを返してリターン
+          if (returnFile.length !== 0) {
+            return returnFile;
+          }
+        } catch (error) {
+          return error.message;
+        }
+      }
+      const files = folder.getFiles();
+      while (files.hasNext()) {
+        const file = files.next();
+        if (file.getName() == findfileName) {
+          //ファイルをそのまま返す
+          return [file];
+        }
+      }
+    }
+  }
+
+  /**
+   * @description　EXCELファイル(CSVだけどエクセル使用のやつ）をグーグルスプレッドシート形式ファイルにするメソッド
+   * @description　 DriveApi V3 に対応 idを返します
    * @author yoshitaka
    * @date 2019-07-14
    * @param {Object} file documentNode　ファイルノード（ＨＴＭＬ側からファイルでとる事を想定）
@@ -114,6 +185,17 @@ export class importCsvLib {
     );
     return res.id;
   }
+
+  /**
+   * @description Excelファイルをスプレッドシート形式ファイルに変更するメソッド
+   * @description　 DriveApi V3 に対応 IDを返します
+   * @author yoshitaka <sato-yoshitaka@aktio.co.jp>
+   * @date 20/12/2024
+   * @param {GoogleAppsScript.Base.Blob} file
+   * @param {string} fileName
+   * @returns {*}  {string}
+   * @memberof importCsvLib
+   */
   createDriveFileFromExcel(
     file: GoogleAppsScript.Base.Blob,
     fileName: string

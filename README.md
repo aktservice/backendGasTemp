@@ -38,6 +38,9 @@ npm install
 code ./
 #ここでVsCodeが開くのでそこから開発
 # clasp コマンドをGlobalにインストールした状態で
+#Googleアカウントへログイン
+clasp login
+#ログイン成功後にプロジェクトのScriptIDを.clasp.jsonのscriptIdに記入して
 clasp open
 # .clasp.jsonに記載されたIdを開くので確認後
 clasp push

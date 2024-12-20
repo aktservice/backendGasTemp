@@ -40,4 +40,26 @@ class SheetEdit {
     };
     Sheets.Spreadsheets.Values.batchUpdate(opt, spId);
   }
+  public append2DimDataUseSheetAPI(
+    data: any[][],
+    stRange = "A1",
+    sheetName?: string
+  ) {
+    const spId = this.sp.getId();
+    const sh = this.sp.getSheetByName(sheetName) ?? this.sh;
+    const shName = sh.getName();
+    const tshName = `${sheetName}!A1`;
+    const resource: GoogleAppsScript.Sheets.Schema.ValueRange = {
+      values: data,
+    };
+    const opt = { valueInputOption: "RAW", insertDataOption: "INSERT_ROWS" };
+    const sheetapiRes = Sheets.Spreadsheets.Values.append(
+      resource,
+      spId,
+      tshName,
+      opt
+    );
+
+    return sheetapiRes;
+  }
 }
